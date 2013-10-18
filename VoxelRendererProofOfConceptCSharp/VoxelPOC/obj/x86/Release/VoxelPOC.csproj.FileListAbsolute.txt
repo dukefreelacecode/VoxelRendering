@@ -1,0 +1,20 @@
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.csprojResolveAssemblyReference.cache
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.Form1.resources
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.Properties.Resources.resources
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.csproj.GenerateResource.Cache
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Release\VoxelPOC.exe
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Release\VoxelPOC.pdb
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Release\Fast Bitmap Beta.dll
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Release\Fast Bitmap Beta.xml
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.exe
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Release\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.exe
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Release\VoxelPOC.exe
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Release\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Release\Fast Bitmap Beta.dll
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Release\Fast Bitmap Beta.xml
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.csprojResolveAssemblyReference.cache
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.Form1.resources
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.Properties.Resources.resources
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.csproj.GenerateResource.Cache

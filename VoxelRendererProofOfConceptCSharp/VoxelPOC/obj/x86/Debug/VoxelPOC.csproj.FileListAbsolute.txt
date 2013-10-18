@@ -1,0 +1,19 @@
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Debug\VoxelPOC.exe
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Debug\VoxelPOC.pdb
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Debug\Fast Bitmap Beta.dll
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\bin\Debug\Fast Bitmap Beta.xml
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Debug\VoxelPOC.Form1.resources
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Debug\VoxelPOC.Properties.Resources.resources
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Debug\VoxelPOC.csproj.GenerateResource.Cache
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Debug\VoxelPOC.exe
+C:\Users\Janis\AppData\Local\Temporary Projects\VoxelPOC\obj\x86\Debug\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Debug\VoxelPOC.exe
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Debug\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Debug\Fast Bitmap Beta.dll
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\bin\Debug\Fast Bitmap Beta.xml
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.Form1.resources
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.Properties.Resources.resources
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.csproj.GenerateResource.Cache
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.exe
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.pdb
+C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.csprojResolveAssemblyReference.cache

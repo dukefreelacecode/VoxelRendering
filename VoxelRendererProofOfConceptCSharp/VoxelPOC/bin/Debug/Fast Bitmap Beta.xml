@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Fast Bitmap Beta</name>
+    </assembly>
+    <members>
+        <member name="T:bmp.FastBitmap">
+            <summary>
+            Diese Klasse ist eine Verbesserung der System.Drawing.Bitmap-klasse
+            Verbesserung meint: schnellere Arbeit, größerer Funktions-Umfang
+            </summary>
+        </member>
+        <member name="M:bmp.FastBitmap.GetPixel(System.Drawing.Point)">
+            <summary>
+            Gibt die Farbe eines Pixels an der angegebenen Poisition an
+            </summary>
+            <param name="p">Poisition des Pixels</param>
+            <returns>Die Farbe des Pixels</returns>
+        </member>
+        <member name="M:bmp.FastBitmap.GetPixel(System.Int32,System.Int32)">
+            <summary>
+            Gibt die Farbe eines Pixels an der angegebenen Poisition an
+            </summary>
+            <param name="x">X-Koordinate des Pixels</param>
+            <param name="y">Y-Koordinate des Pixels</param>
+            <returns>Die Farbe des Pixels</returns>
+        </member>
+        <member name="M:bmp.FastBitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)">
+            <summary>
+            Setzt den Pixel an der angegeben Poisition auf die angegebene Farbe
+            </summary>
+            <param name="x">X-Koordinate des Pixels</param>
+            <param name="y">Y-Koordinate des Pixels</param>
+            <param name="col">Die neue Farbe des Pixels</param>
+        </member>
+        <member name="M:bmp.FastBitmap.SetPixel(System.Drawing.Point,System.Drawing.Color)">
+            <summary>
+            Setzt den Pixel an der angegeben Poisition auf die angegebene Farbe
+            </summary>
+            <param name="p">Poisition des Pixels</param>
+            <param name="col"></param>
+        </member>
+        <member name="M:bmp.FastBitmap.ReplacePixel(System.Drawing.Color,System.Drawing.Color,System.Byte)">
+            <summary>
+            Ersetzt alle Pixel der angegeben Farbe durch eine andere Farbe
+            </summary>
+            <param name="old_color">Diese Farbe wird ersetzt</param>
+            <param name="new_color">Ersetzt old_color</param>
+            <param name="range">Schließt auch Pixel ein, die nicht genau die gleiche farbe haben</param>
+        </member>
+        <member name="M:bmp.FastBitmap.ReplacePixel(System.Drawing.Color,System.Drawing.Color)">
+            <summary>
+            Ersetzt alle Pixel der angegeben Farbe durch eine andere Farbe
+            </summary>
+            <param name="old_color">Diese Farbe wird ersetzt</param>
+            <param name="new_color">Ersetzt old_color</param>
+        </member>
+        <member name="M:bmp.FastBitmap.ToColorArray">
+            <summary>
+            Gibt ein 2-Dimensionales Color Array zurück, welches das Bild darstellt
+            </summary>
+        </member>
+        <member name="M:bmp.FastBitmap.ToBitmap">
+            <summary>
+            Konvertiert das Bild in eine System.Drawing.Bitmap-Inztanz
+            </summary>
+        </member>
+        <member name="P:bmp.FastBitmap.Width">
+            <summary>
+            Gibt die Breite des Bilds an
+            </summary>
+        </member>
+        <member name="P:bmp.FastBitmap.Height">
+            <summary>
+            Gibt die Höhe des Bilds an
+            </summary>
+        </member>
+        <member name="T:bmp.HsvColor">
+            <summary>
+            Ermöglicht Farbkorektruren der Helligkeit und Sättigung
+            </summary>
+        </member>
+        <member name="P:bmp.HsvColor.Hue">
+            <summary>
+            Farbton in Grad°
+            </summary>
+        </member>
+        <member name="P:bmp.HsvColor.Saturation">
+            <summary>
+            Sättigung auf 100 nominiert
+            </summary>
+        </member>
+        <member name="P:bmp.HsvColor.Value">
+            <summary>
+            Helligkeit auf 100 nominiert
+            </summary>
+        </member>
+    </members>
+</doc>
