@@ -17,3 +17,5 @@ C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\D
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.exe
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.pdb
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Debug\VoxelPOC.csprojResolveAssemblyReference.cache
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Debug\VoxelPOC.exe
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Debug\VoxelPOC.pdb

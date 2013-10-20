@@ -1,0 +1,19 @@
+﻿Build started 20.10.2013 21:47:30.
+     1>Project "C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\AcceleratedVoxelRendering\AcceleratedVoxelRendering.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\AMD APP\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>c:\users\janis\documents\visual studio 2012\projects\acceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(18): warning C4068: unknown pragma
+     1>c:\users\janis\documents\visual studio 2012\projects\acceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(19): warning C4068: unknown pragma
+     1>c:\users\janis\documents\visual studio 2012\projects\acceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(138): warning C4996: 'clGetExtensionFunctionAddress': was declared deprecated
+                 c:\program files (x86)\amd app\include\cl\cl.h(1207) : see declaration of 'clGetExtensionFunctionAddress'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\AMD APP\lib\x86" OpenCL.lib GlAux.lib GLEW32.lib glut32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.lib" /MACHINE:X86 Debug\clErrorString.obj
+         Debug\main.obj
+         Debug\stdafx.obj
+         AcceleratedVoxelRendering.vcxproj -> C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.exe
+     1>Done Building Project "C:\Users\Janis\documents\visual studio 2012\Projects\AcceleratedVoxelRendering\AcceleratedVoxelRendering\AcceleratedVoxelRendering.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.07
