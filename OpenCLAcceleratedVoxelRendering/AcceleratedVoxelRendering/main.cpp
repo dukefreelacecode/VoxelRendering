@@ -13,6 +13,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <stdio.h>
 #include "clErrorString.h"
 
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : enable
@@ -85,6 +86,24 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
+int loadFile(char* path, char** data)
+{
+	*data = NULL;
+	FILE* file = fopen(path, "rb");
+	if(file == NULL) return 0;
+
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	*data = new char[size+1];
+	if(data == NULL) return 0;
+
+	size_t bytesRead = fread((void*)(*data),1,size,file);
+	*((*data)+size) = 0;
+	return bytesRead;
+}
+
 int main(int argc, char** argv) 
 {
 	glutInit(&argc, argv);
@@ -111,23 +130,12 @@ int main(int argc, char** argv)
 	glGenTextures(1, &textureID); 	
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	const int textureSize = 256;
-
-	char data[textureSize*textureSize*4];
-	for (int x = 0; x < textureSize; x++)
-	{
-		for (int y = 0; y < textureSize; y++)
-		{
-			for (int c = 0; c < 4; c++)
-			{
-				data[(x*textureSize+y)*4+c] = (x+y+50*c)%256;
-			}
-		}
-	}
+	const int textureSize = 1024;
+	
 
 	glTexParameterf(GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, textureSize, textureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, textureSize, textureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	
 	
 
@@ -165,15 +173,10 @@ int main(int argc, char** argv)
 	cl_perr("clCreateCommandQueue", cl_err);
 
 
-	ifstream kernel_file("../AcceleratedVoxelRendering/kernel.cl");
-	string line;
-	stringstream kernel_file_sstream;
-	while (getline(kernel_file, line)) kernel_file_sstream << line << endl;
 
-	string kernel_file_string = kernel_file_sstream.str();
-	char* kernel_file_c_str = (char*)(kernel_file_string.c_str());
-	size_t kernel_file_c_str_size = strlen(kernel_file_c_str);
-
+	
+	char* kernel_file_c_str;
+	size_t kernel_file_c_str_size = loadFile("../AcceleratedVoxelRendering/kernel.cl", &kernel_file_c_str);
 		
 	my_cl_program = clCreateProgramWithSource(my_cl_context, 1, (const char**)&kernel_file_c_str, &kernel_file_c_str_size, &cl_err);
 	cl_perr("clCreateProgramWithSource", cl_err);
