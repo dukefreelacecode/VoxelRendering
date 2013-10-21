@@ -1,14 +1,14 @@
 __kernel void blub(__write_only image2d_t outputImage,  const int frames)
 {
-	for(int i = 0; i < 256;i++)
-	for(int j = 0; j < 256;j++)
-	{
-		int2 coords = (int2)(i,j);
-		//int4 pixel = (int4)((i<<20)+(j<<12),0,0,255);
+	size_t x = get_global_id(0);
+	size_t y = get_global_id(1);
 
+	if(x < 1920 && y < 1080)
+	{
+		int2 coords = (int2)(x,y);
 		float nanana = (1+sin(.1f*frames))*.5f;
 
-		float4 pixel = (float4)(nanana,j/256.0f,i/256.0f*j/256.0f,1);
+		float4 pixel = (float4)(nanana,x/1920.0f,y/1080.0f*x/1920.0f,1);
 		write_imagef(outputImage, coords, pixel);
 	}
 }

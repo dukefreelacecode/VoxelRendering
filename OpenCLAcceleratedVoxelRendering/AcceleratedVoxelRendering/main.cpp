@@ -14,6 +14,8 @@
 #include <fstream>
 #include <vector>
 #include <stdio.h>
+#include "wtypes.h"
+#include <time.h>
 #include "clErrorString.h"
 
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : enable
@@ -29,6 +31,9 @@ int windowID;
 
 GLuint textureID;
 
+int screen_width,screen_height;
+
+time_t startTime;
 
 cl_int cl_err;
 cl_platform_id my_cl_platform;
@@ -38,6 +43,7 @@ cl_command_queue my_cl_command_queue;
 cl_program my_cl_program;
 cl_mem my_cl_buffer;
 cl_kernel my_cl_kernel;
+
 
 void cl_perr(char* context, cl_int err)
 {
@@ -52,10 +58,11 @@ void display()
 	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(int), &frameCount);
 	cl_perr("clSetKernelArg", cl_err);
 
-	size_t global_work_size = 1;
-	size_t local_work_size = 1;
+	
+	size_t local_work_size[] = {16, 16};
+	size_t global_work_size[] = { (screen_width/local_work_size[0]+1)*local_work_size[0], (screen_height/local_work_size[1]+1)*local_work_size[1] };
 
-	cl_err = clEnqueueNDRangeKernel (my_cl_command_queue, my_cl_kernel, 1, NULL, &global_work_size,  &local_work_size, 0, NULL, NULL);
+	cl_err = clEnqueueNDRangeKernel (my_cl_command_queue, my_cl_kernel, 2, NULL, global_work_size,  local_work_size, 0, NULL, NULL);
 	cl_perr("clEnqueueNDRangeKernel", cl_err);
 	clFinish(my_cl_command_queue);
 
@@ -75,6 +82,14 @@ void display()
 	Sleep(20);
 	glutPostRedisplay();
 	frameCount++;
+	
+	if(frameCount % 100 == 0)
+	{
+		time_t now;
+		time(&now);
+		cout << (frameCount/((float)(now-startTime))) << " FPS" << endl;
+
+	}
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -104,12 +119,34 @@ int loadFile(char* path, char** data)
 	return bytesRead;
 }
 
+// Get the horizontal and vertical screen sizes in pixel
+void GetDesktopResolution(int& horizontal, int& vertical)
+{
+   RECT desktop;
+   // Get a handle to the desktop window
+   const HWND hDesktop = GetDesktopWindow();
+   // Get the size of screen to the variable desktop
+   GetWindowRect(hDesktop, &desktop);
+   // The top left corner will have coordinates (0,0)
+   // and the bottom right corner will have coordinates
+   // (horizontal, vertical)
+   horizontal = desktop.right;
+   vertical = desktop.bottom;
+}
+
+
 int main(int argc, char** argv) 
 {
+	
+	GetDesktopResolution(screen_width, screen_height);
+
+
+
 	glutInit(&argc, argv);
 
+	
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(window_width, window_height);
+	glutInitWindowSize(screen_width, screen_height);
 	glutInitWindowPosition(200,50);
 	windowID = glutCreateWindow("OpenGL glDrawPixels demo");
 
@@ -130,12 +167,12 @@ int main(int argc, char** argv)
 	glGenTextures(1, &textureID); 	
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	const int textureSize = 1024;
+	//const int textureSize = 1024;
 	
 
 	glTexParameterf(GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, textureSize, textureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	
 	
 
@@ -156,6 +193,7 @@ int main(int argc, char** argv)
 	cl_err = clGetDeviceInfo(my_cl_device, CL_DEVICE_NAME, 254, devName, NULL);
 	cl_perr("clGetDeviceInfo", cl_err);
 	cout << "Device Name: " << devName << endl;
+	
 
 
 	// ===== OpenCL Context =========
@@ -209,5 +247,7 @@ int main(int argc, char** argv)
 
 	for (int i = 0; i < size; i++) cout << cl_buffer_data[i] << " ";*/
 
+	glutFullScreen();
+	time(&startTime);
 	glutMainLoop();
 }

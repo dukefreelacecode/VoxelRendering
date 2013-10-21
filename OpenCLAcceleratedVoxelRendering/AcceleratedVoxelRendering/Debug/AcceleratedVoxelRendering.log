@@ -1,13 +1,13 @@
-﻿Build started 21.10.2013 11:23:18.
+﻿Build started 21.10.2013 19:29:49.
      1>Project "C:\Users\Janis\Documents\GitHub\VoxelRendering\OpenCLAcceleratedVoxelRendering\AcceleratedVoxelRendering\AcceleratedVoxelRendering.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\AMD APP\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(19): warning C4068: unknown pragma
-     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(20): warning C4068: unknown pragma
-     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(92): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(21): warning C4068: unknown pragma
+     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(22): warning C4068: unknown pragma
+     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(107): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : see declaration of 'fopen'
-     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(205): warning C4996: 'clCreateFromGLTexture2D': was declared deprecated
+     1>c:\users\janis\documents\github\voxelrendering\openclacceleratedvoxelrendering\acceleratedvoxelrendering\main.cpp(240): warning C4996: 'clCreateFromGLTexture2D': was declared deprecated
                  c:\program files (x86)\amd app\include\cl\cl_gl.h(109) : see declaration of 'clCreateFromGLTexture2D'
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Janis\Documents\GitHub\VoxelRendering\OpenCLAcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\AMD APP\lib\x86" OpenCL.lib GlAux.lib GLEW32.lib glut32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Janis\Documents\GitHub\VoxelRendering\OpenCLAcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Janis\Documents\GitHub\VoxelRendering\OpenCLAcceleratedVoxelRendering\Debug\AcceleratedVoxelRendering.lib" /MACHINE:X86 Debug\clErrorString.obj
@@ -18,4 +18,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.87
+Time Elapsed 00:00:01.79
