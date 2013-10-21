@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace VoxelPOC
 {
@@ -16,6 +17,9 @@ namespace VoxelPOC
         static int rayTraceStepCount = 0;
         public int bytes = 0;
 
+        const byte ID_LEAF = 0x42;
+        const byte ID_BRANCH = 0x43;
+
 
         public Vector3 WorldToOctree(Vector3 v)
         {
@@ -28,7 +32,7 @@ namespace VoxelPOC
             return Vector3.PointwiseMultiply(v, UpperCornerWorld - LowerCornerWorld) + LowerCornerWorld;
         }
 
-        public Octree(List<SurfaceTangentPoint> pcloud)
+        public Octree(List<SurfaceTangentPoint> pcloud, int depth)
         {
             // find range of points
             FindMinMax(pcloud);
@@ -43,7 +47,7 @@ namespace VoxelPOC
             }
 
             // build the tree
-            Root = BuildOctree(local_points, new Vector3(0, 0, 0), 0, 5);
+            Root = BuildOctree(local_points, new Vector3(0, 0, 0), 0, depth);
         }
 
         private IOctreeNode BuildOctree(List<SurfaceTangentPoint> points, Vector3 LowerLocalCorner, int current_recursion, int max_recursion)
@@ -234,6 +238,79 @@ namespace VoxelPOC
 
             return min < double.MaxValue ? min : -1;
 
+        }
+
+        public void WriteToFile(string path)
+        {
+            List<byte> data = new List<byte>(bytes);
+            WriteToFileRec(data, Root);
+            FileStream fs = File.Create(path);
+            BinaryWriter bw = new BinaryWriter(fs);
+            bw.Write(data.ToArray());
+            bw.Close();
+            fs.Close();
+        }
+
+        int WriteToFileRec(List<byte> data, IOctreeNode self_node)
+        {
+            int returnOffset = data.Count;
+
+            if (self_node is OctreeParent)
+            {
+                OctreeParent op = (OctreeParent)self_node;
+
+                byte[] block = new byte[8*4+1];
+                block[0] = ID_BRANCH;
+                data.AddRange(block);
+
+
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 0, WriteToFileRec(data, op.xyz));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 1, WriteToFileRec(data, op.xyZ));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 2, WriteToFileRec(data, op.xYz));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 3, WriteToFileRec(data, op.xYZ));
+
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 4, WriteToFileRec(data, op.Xyz));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 5, WriteToFileRec(data, op.XyZ));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 6, WriteToFileRec(data, op.XYz));
+                writeIntToBytesAt(data, returnOffset + 1 + 4 * 7, WriteToFileRec(data, op.XYZ));
+
+
+
+            }
+            else if (self_node is OctreeEndNode)
+            {
+                OctreeEndNode oen = (OctreeEndNode)self_node;
+
+                byte[] block = new byte[7];
+                block[0] = ID_LEAF;
+                block[1] = 0x21; // red
+                block[2] = 0x22; // green 
+                block[3] = 0x23; // blue
+                block[4] = (byte)((char)(oen.SurfaceNormal.X * 126));
+                block[5] = (byte)((char)(oen.SurfaceNormal.Y * 126));
+                block[6] = (byte)((char)(oen.SurfaceNormal.Z * 126));
+
+                data.AddRange(block);
+            }
+
+            return returnOffset;
+
+        }
+
+        private void writeIntToBytesAt(List<byte> data, int index, int integer)
+        {
+            byte[] bytes = new byte[4]
+            {
+                (byte)((integer>>24)&0x000000ff),
+                (byte)((integer>>16)&0x000000ff),
+                (byte)((integer>>8)&0x000000ff),
+                (byte)((integer>>0)&0x000000ff),
+            };
+
+            for (int i = 0; i < 4; i++)
+            {
+                data[index + i] = bytes[i];
+            }
         }
     }
 }

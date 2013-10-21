@@ -18,3 +18,13 @@ C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\R
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.Form1.resources
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.Properties.Resources.resources
 C:\Users\Janis\documents\visual studio 2010\Projects\VoxelPOC\VoxelPOC\obj\x86\Release\VoxelPOC.csproj.GenerateResource.Cache
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.csprojResolveAssemblyReference.cache
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.Form1.resources
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.Properties.Resources.resources
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.csproj.GenerateResource.Cache
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.exe
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\bin\Release\VoxelPOC.exe
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\bin\Release\VoxelPOC.pdb
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\bin\Release\Fast Bitmap Beta.dll
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\bin\Release\Fast Bitmap Beta.xml
+C:\Users\Janis\Documents\GitHub\VoxelRendering\VoxelRendererProofOfConceptCSharp\VoxelPOC\obj\x86\Release\VoxelPOC.pdb
