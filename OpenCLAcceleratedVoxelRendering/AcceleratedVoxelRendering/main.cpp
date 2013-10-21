@@ -44,6 +44,10 @@ cl_program my_cl_program;
 cl_mem my_cl_buffer;
 cl_kernel my_cl_kernel;
 
+cl_event AcquireTextureDone;
+cl_event RenderTextureDone;
+cl_event ReleaseTextureDone;
+
 
 void cl_perr(char* context, cl_int err)
 {
@@ -54,17 +58,30 @@ void cl_perr(char* context, cl_int err)
 void display()
 {
 	
+	cl_err = clEnqueueAcquireGLObjects(my_cl_command_queue, 1, &my_cl_buffer, NULL, NULL, &AcquireTextureDone);
+	cl_perr("clEnqueueAcquireGLObjects", cl_err);
+
 	cl_err = clSetKernelArg(my_cl_kernel, 0, sizeof(cl_mem), &my_cl_buffer);
 	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(int), &frameCount);
+	cl_err |= clSetKernelArg(my_cl_kernel, 2, sizeof(int), &screen_width);
+	cl_err |= clSetKernelArg(my_cl_kernel, 3, sizeof(int), &screen_height);
 	cl_perr("clSetKernelArg", cl_err);
 
 	
 	size_t local_work_size[] = {16, 16};
 	size_t global_work_size[] = { (screen_width/local_work_size[0]+1)*local_work_size[0], (screen_height/local_work_size[1]+1)*local_work_size[1] };
 
-	cl_err = clEnqueueNDRangeKernel (my_cl_command_queue, my_cl_kernel, 2, NULL, global_work_size,  local_work_size, 0, NULL, NULL);
+	cl_err = clEnqueueNDRangeKernel (my_cl_command_queue, my_cl_kernel, 2, NULL, global_work_size,  local_work_size, 1, &AcquireTextureDone, &RenderTextureDone);
 	cl_perr("clEnqueueNDRangeKernel", cl_err);
-	clFinish(my_cl_command_queue);
+
+	cl_err = clEnqueueReleaseGLObjects(my_cl_command_queue, 1, &my_cl_buffer, 1, &RenderTextureDone, &ReleaseTextureDone);	
+	cl_perr("clEnqueueReleaseGLObjects", cl_err);
+
+	clWaitForEvents(1, &ReleaseTextureDone);
+
+	//clFinish(my_cl_command_queue);
+
+
 
     glBegin(GL_QUADS);
     glTexCoord2f(0, 1);
@@ -76,10 +93,9 @@ void display()
     glTexCoord2f(0, 0);
     glVertex3f(-1, -1, 0.0f);
     glEnd();
-    glFinish();
+    //glFinish();
 
 	glutSwapBuffers();
-	Sleep(20);
 	glutPostRedisplay();
 	frameCount++;
 	
