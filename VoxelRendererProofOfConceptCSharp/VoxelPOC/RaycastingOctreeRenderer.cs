@@ -9,15 +9,12 @@ namespace VoxelPOC
     class RaycastingOctreeRenderer
     {
         public static int frameCount = 0;
-        static double t_overhead = 0;
-        static double t_raytrace = 0;
 
         public static Bitmap Render(Octree tree, int width, int height)
         {
             Vector3 light = (new Vector3(1, 1, .5).Normalized());
             bmp.FastBitmap fbmp = new bmp.FastBitmap(width, height);
 
-            Timer.Tic();
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -32,11 +29,7 @@ namespace VoxelPOC
 
                         if (ray.CurrentParameter > 0)
                         {
-                            t_overhead += Timer.Toc();
-                            Timer.Tic();
                             tree.TraceRay(tree.Root, ray, new Vector3(0, 0, 0), 0);
-                            t_raytrace += Timer.Toc();
-                            Timer.Tic();
 
                             if (ray.Result != null)
                             {

@@ -4,27 +4,17 @@
 #include <GL/GLU.h>
 #include <gl\glut.h>
 #include <iostream>
-#include <sstream>
-#include "math.h"
-#include "octree_node.h"
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
-#include <CL/cl_gl_ext.h>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <stdio.h>
-#include "wtypes.h"
 #include <time.h>
 #include "clErrorString.h"
+#include "transformMatrix_functions.h"
 
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : enable
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : require
 
 using namespace std;
 
-const unsigned int window_width = 512, window_height = 512;
-const int size = window_width * window_height;
 
 int frameCount = 0;
 int windowID;
@@ -49,6 +39,19 @@ cl_event RenderTextureDone;
 cl_event ReleaseTextureDone;
 
 
+float pitch;
+float yaw;
+cl_float3 camPosition;
+cl_float16 transformMatrix;
+
+void rebuild_transformMatrix()
+{
+	transformMatrix = transformMatrix_identity();
+	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotY(yaw));
+	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotX(pitch));
+	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_translate(camPosition.s[0], camPosition.s[1], camPosition.s[2]));
+}
+
 void cl_perr(char* context, cl_int err)
 {
 	const char* msg = clErrorString(err);
@@ -57,14 +60,16 @@ void cl_perr(char* context, cl_int err)
 
 void display()
 {
-	
+	Sleep(20);
+
 	cl_err = clEnqueueAcquireGLObjects(my_cl_command_queue, 1, &my_cl_buffer, NULL, NULL, &AcquireTextureDone);
 	cl_perr("clEnqueueAcquireGLObjects", cl_err);
 
+	
 	cl_err = clSetKernelArg(my_cl_kernel, 0, sizeof(cl_mem), &my_cl_buffer);
-	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(int), &frameCount);
-	cl_err |= clSetKernelArg(my_cl_kernel, 2, sizeof(int), &screen_width);
-	cl_err |= clSetKernelArg(my_cl_kernel, 3, sizeof(int), &screen_height);
+	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(int), &screen_width);
+	cl_err |= clSetKernelArg(my_cl_kernel, 2, sizeof(int), &screen_height);
+	cl_err |= clSetKernelArg(my_cl_kernel, 3, sizeof(cl_float16), &transformMatrix);
 	cl_perr("clSetKernelArg", cl_err);
 
 	
@@ -110,11 +115,34 @@ void display()
 
 void keyboard(unsigned char key, int x, int y)
 {
-	if(key == 27)
+	switch (key)
 	{
+	case 27:		
 		glutDestroyWindow(windowID);
 		exit(EXIT_SUCCESS);
+		break;
+
+	case 'w':
+		pitch += 0.1f;
+		break;
+
+	case 's':
+		pitch -= 0.1f;
+		break;
+
+	case 'a':
+		yaw += 0.1f;
+		break;
+
+	case 'd':
+		yaw -= 0.1f;
+		break;
+
+	default:
+		break;
 	}
+
+	rebuild_transformMatrix();
 }
 
 int loadFile(char* path, char** data)
@@ -153,13 +181,13 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 
 int main(int argc, char** argv) 
 {
-	
 	GetDesktopResolution(screen_width, screen_height);
 
-
+	camPosition.s[0] = 0;
+	camPosition.s[1] = 0;
+	camPosition.s[2] = 0;
 
 	glutInit(&argc, argv);
-
 	
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(screen_width, screen_height);
@@ -243,27 +271,32 @@ int main(int argc, char** argv)
 		char message_buffer[1024*16];
 		clGetProgramBuildInfo (my_cl_program, my_cl_device, CL_PROGRAM_BUILD_LOG, 1024*16-1, message_buffer, NULL);
 		cout << message_buffer << endl;
+		char dummy;
+		cin >> dummy;
 	}
-	
-	my_cl_kernel = clCreateKernel (my_cl_program, "blub", &cl_err);
-	cl_perr("clCreateKernel", cl_err);
+	else
+	{
+		my_cl_kernel = clCreateKernel (my_cl_program, "renderPixel", &cl_err);
+		cl_perr("clCreateKernel", cl_err);
 
 
-	const int size = 100;
-	float* cl_buffer_data = new float[size];
-	for (int i = 0; i < size; i++) cl_buffer_data[i]=i;
+		const int size = 100;
+		float* cl_buffer_data = new float[size];
+		for (int i = 0; i < size; i++) cl_buffer_data[i]=i;
 
-	my_cl_buffer = clCreateFromGLTexture2D(my_cl_context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureID, &cl_err);
+		my_cl_buffer = clCreateFromGLTexture2D(my_cl_context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureID, &cl_err);
 
-	cl_perr("clCreateBuffer", cl_err);
+		cl_perr("clCreateBuffer", cl_err);
 
 
-	/*cl_err = clEnqueueReadBuffer(cl_command_queue , cl_buffer, CL_TRUE, 0, size*sizeof(float), cl_buffer_data, 0, NULL, NULL);
-	cl_perr("clEnqueueReadBuffer", cl_err);
+		/*cl_err = clEnqueueReadBuffer(cl_command_queue , cl_buffer, CL_TRUE, 0, size*sizeof(float), cl_buffer_data, 0, NULL, NULL);
+		cl_perr("clEnqueueReadBuffer", cl_err);
 
-	for (int i = 0; i < size; i++) cout << cl_buffer_data[i] << " ";*/
+		for (int i = 0; i < size; i++) cout << cl_buffer_data[i] << " ";*/
 
-	glutFullScreen();
-	time(&startTime);
-	glutMainLoop();
+		rebuild_transformMatrix();
+		glutFullScreen();
+		time(&startTime);
+		glutMainLoop();
+	}
 }

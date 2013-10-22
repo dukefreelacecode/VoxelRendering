@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="GeneratePointCloud.cs" />
     <Compile Include="IOctreeNode.cs" />
+    <Compile Include="OctFileRenderer.cs" />
     <Compile Include="Octree.cs" />
     <Compile Include="OctreeEndNode.cs" />
     <Compile Include="OctreeParent.cs" />
