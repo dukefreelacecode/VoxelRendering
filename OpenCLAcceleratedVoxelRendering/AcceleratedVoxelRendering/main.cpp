@@ -10,6 +10,10 @@
 #include "clErrorString.h"
 #include "transformMatrix_functions.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265f
+#endif
+
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : enable
 #pragma OPENCL EXTENSION CL_KHR_gl_sharing : require
 
@@ -47,9 +51,9 @@ cl_float16 transformMatrix;
 void rebuild_transformMatrix()
 {
 	transformMatrix = transformMatrix_identity();
-	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotY(yaw));
-	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotX(pitch));
 	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_translate(camPosition.s[0], camPosition.s[1], camPosition.s[2]));
+	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotY(yaw));
+	transformMatrix = transformMatrix_multiply(transformMatrix, transformMatrix_rotX(pitch));	
 }
 
 void cl_perr(char* context, cl_int err)
@@ -58,9 +62,46 @@ void cl_perr(char* context, cl_int err)
 	if(msg != NULL) cout << context << ": " << clErrorString(err) << endl;
 }
 
+void ManageMouseInput()
+{
+	POINT p;
+	if (GetCursorPos(&p))
+	{
+		yaw += (p.x-screen_width/2)*0.005f;
+		pitch += (p.y-screen_height/2)*0.005f;
+		SetCursorPos(screen_width/2, screen_height/2);
+		rebuild_transformMatrix();
+		if(pitch > M_PI/2) pitch = M_PI/2;
+		if(pitch < -M_PI/2) pitch = -M_PI/2;
+	}
+}
+
+void ManageKeyboardInput()
+{
+	if(GetKeyState(VK_ESCAPE)<0) // escape
+	{
+		glutDestroyWindow(windowID);
+		exit(EXIT_SUCCESS);
+	}
+
+	float _cos = cos(yaw);
+	float _sin = sin(yaw);
+	const float moveSpeed = 0.01f;
+
+	if(GetKeyState('W')<0) { camPosition.s[0] += moveSpeed * _sin ; camPosition.s[2] += moveSpeed * _cos; }
+	if(GetKeyState('S')<0) { camPosition.s[0] += moveSpeed * -_sin ; camPosition.s[2] += moveSpeed * -_cos; }
+	if(GetKeyState('A')<0) { camPosition.s[0] += moveSpeed * -_cos ; camPosition.s[2] += moveSpeed * _sin; }
+	if(GetKeyState('D')<0) { camPosition.s[0] += moveSpeed * _cos ; camPosition.s[2] += moveSpeed * -_sin; }
+	if(GetKeyState('E')<0) { camPosition.s[1] += moveSpeed; }
+	if(GetKeyState('Q')<0) { camPosition.s[1] -= moveSpeed; }
+
+	rebuild_transformMatrix();
+}
+
 void display()
 {
-	Sleep(20);
+	ManageMouseInput();
+	ManageKeyboardInput();
 
 	cl_err = clEnqueueAcquireGLObjects(my_cl_command_queue, 1, &my_cl_buffer, NULL, NULL, &AcquireTextureDone);
 	cl_perr("clEnqueueAcquireGLObjects", cl_err);
@@ -85,7 +126,6 @@ void display()
 	clWaitForEvents(1, &ReleaseTextureDone);
 
 	//clFinish(my_cl_command_queue);
-
 
 
     glBegin(GL_QUADS);
@@ -113,38 +153,6 @@ void display()
 	}
 }
 
-void keyboard(unsigned char key, int x, int y)
-{
-	switch (key)
-	{
-	case 27:		
-		glutDestroyWindow(windowID);
-		exit(EXIT_SUCCESS);
-		break;
-
-	case 'w':
-		pitch += 0.1f;
-		break;
-
-	case 's':
-		pitch -= 0.1f;
-		break;
-
-	case 'a':
-		yaw += 0.1f;
-		break;
-
-	case 'd':
-		yaw -= 0.1f;
-		break;
-
-	default:
-		break;
-	}
-
-	rebuild_transformMatrix();
-}
-
 int loadFile(char* path, char** data)
 {
 	*data = NULL;
@@ -163,21 +171,14 @@ int loadFile(char* path, char** data)
 	return bytesRead;
 }
 
-// Get the horizontal and vertical screen sizes in pixel
 void GetDesktopResolution(int& horizontal, int& vertical)
 {
    RECT desktop;
-   // Get a handle to the desktop window
    const HWND hDesktop = GetDesktopWindow();
-   // Get the size of screen to the variable desktop
    GetWindowRect(hDesktop, &desktop);
-   // The top left corner will have coordinates (0,0)
-   // and the bottom right corner will have coordinates
-   // (horizontal, vertical)
    horizontal = desktop.right;
    vertical = desktop.bottom;
 }
-
 
 int main(int argc, char** argv) 
 {
@@ -185,7 +186,7 @@ int main(int argc, char** argv)
 
 	camPosition.s[0] = 0;
 	camPosition.s[1] = 0;
-	camPosition.s[2] = 0;
+	camPosition.s[2] = -5;
 
 	glutInit(&argc, argv);
 	
@@ -198,11 +199,11 @@ int main(int argc, char** argv)
 	//glutReshapeFunc(reshape);
 	//glutMouseFunc(mouse_button);
 	//glutMotionFunc(mouse_motion);
-	glutKeyboardFunc(keyboard);
+	//glutKeyboardFunc(keyboard);
 	//glutIdleFunc(idle);
   
 	//glEnable(GL_DEPTH_TEST);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	//glClearColor(0.0, 0.0, 0.0, 1.0);
 	//glPointSize(2);
 
 
