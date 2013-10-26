@@ -1,4 +1,4 @@
-#define EPSILON 1e-6f
+#define EPSILON 1e-5f
 
 float3 mat_vec_mul(float16 mat, float4 vec)
 {
@@ -27,19 +27,31 @@ bool PointInCube(float3 point, float4 cube)
 float CubeRayIntersectPointParameter(float3 ray_origin, float3 ray_direction, float4 cube, bool entryPoint)
 {
 	float parameterCanidates[6];
-
-	parameterCanidates[0] = (cube.x          - ray_origin.x) / ray_direction.x;
+	
+	/*parameterCanidates[0] = (cube.x          - ray_origin.x) / ray_direction.x;
 	parameterCanidates[1] = (cube.x + cube.w - ray_origin.x) / ray_direction.x;
 
 	parameterCanidates[2] = (cube.y          - ray_origin.y) / ray_direction.y;
 	parameterCanidates[3] = (cube.y + cube.w - ray_origin.y) / ray_direction.y;
 
 	parameterCanidates[4] = (cube.z          - ray_origin.z) / ray_direction.z;
-	parameterCanidates[5] = (cube.z + cube.w - ray_origin.z) / ray_direction.z;
+	parameterCanidates[5] = (cube.z + cube.w - ray_origin.z) / ray_direction.z;*/
+
+
+
+
+	parameterCanidates[0] = cube.x / ray_direction.x - ray_origin.x / ray_direction.x;
+	parameterCanidates[1] = cube.x / ray_direction.x + cube.w / ray_direction.x - ray_origin.x / ray_direction.x;
+
+	parameterCanidates[2] = cube.y / ray_direction.y - ray_origin.y / ray_direction.y;
+	parameterCanidates[3] = cube.y / ray_direction.y + cube.w / ray_direction.y - ray_origin.y / ray_direction.y;
+
+	parameterCanidates[4] = cube.z / ray_direction.z - ray_origin.z / ray_direction.z;
+	parameterCanidates[5] = cube.z / ray_direction.z + cube.w / ray_direction.z - ray_origin.z / ray_direction.z;
 
 	float new_parameter = -1; // -1 == undefined
 
-	for(int i = 0; i < 6; i++) if(PointInCube(ray_origin + parameterCanidates[i] * ray_direction, cube)
+	for(int i = 0; i < 6; i++) if(parameterCanidates[i] > 0 && PointInCube(ray_origin + parameterCanidates[i] * ray_direction, cube)
 			&& (new_parameter == -1 || ((new_parameter < parameterCanidates[i]) != entryPoint))) 
 			new_parameter = parameterCanidates[i];
 
@@ -60,7 +72,7 @@ void makeSubCubes(float4* cubes, float4 cube)
 	cubes[7] = (float4)(cube.x+h, cube.y+h, cube.z+h, h);
 }
 
-int readIntAt(__global unsigned char* octree, int offset)
+int readIntAt(__global uchar* octree, int offset)
 {
 	return
 	(((int)octree[offset+0]) << 0) |
@@ -70,7 +82,7 @@ int readIntAt(__global unsigned char* octree, int offset)
 }
 
 
-__kernel void renderPixel(__write_only image2d_t outputImage, __global unsigned char* octree, const int width, const int height, const float16 transformMatrix)
+__kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* octree, const int width, const int height, const float16 transformMatrix)
 {
 	size_t x = get_global_id(0);
 	size_t y = get_global_id(1);
@@ -101,7 +113,7 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global unsigned 
 
 
 			// advance ray loop
-			for(int rayCastStep = 0; rayCastStep < 80 && !stopAdvanceRay; rayCastStep++)
+			for(int rayCastStep = 0; rayCastStep < 120 && !stopAdvanceRay; rayCastStep++)
 			{
 				int current_octree_node = 0;
 				float4 current_cube = (float4)(0, 0, 0, 1);
@@ -132,7 +144,30 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global unsigned 
 
 								if(subcube_node <= 0)
 								{
-									ray_parameter = 2 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
+									float increment = subcubes[i].w/2;
+									
+									while(increment > EPSILON)
+									{
+										while(PointInCube(ray_origin + ray_direction * (ray_parameter+increment), subcubes[i]))
+											ray_parameter += increment;
+
+										increment /= 2;
+									}
+									ray_parameter += 2*increment;
+
+									/*float new_ray_parameter = 3 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
+									if(new_ray_parameter > ray_parameter)
+									{
+										ray_parameter = new_ray_parameter;
+									}
+									else
+									{
+										stopAdvanceRay = true;
+										if(new_ray_parameter == -1)
+										pixel.x=1;
+										pixel.y=.5f;
+									}*/
+									//ray_parameter += subcubes[i].w*0.3f;
 									stopTraverseOctree = true;
 								}
 								else

@@ -188,7 +188,7 @@ int main(int argc, char** argv)
 
 	camPosition.s[0] = 0;
 	camPosition.s[1] = 0;
-	camPosition.s[2] = -5;
+	camPosition.s[2] = 0;
 
 	glutInit(&argc, argv);
 	
