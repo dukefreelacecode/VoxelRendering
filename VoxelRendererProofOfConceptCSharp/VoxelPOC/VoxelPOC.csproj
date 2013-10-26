@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BufferPixel.cs" />
+    <Compile Include="BuildOctreeFromFile.cs" />
     <Compile Include="FullRecursiveOctreeRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

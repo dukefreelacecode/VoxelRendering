@@ -35,7 +35,8 @@ cl_device_id my_cl_device;
 cl_context my_cl_context;
 cl_command_queue my_cl_command_queue;
 cl_program my_cl_program;
-cl_mem my_cl_buffer;
+cl_mem my_cl_rendertexture_buffer;
+cl_mem my_cl_octree_buffer;
 cl_kernel my_cl_kernel;
 
 cl_event AcquireTextureDone;
@@ -103,14 +104,15 @@ void display()
 	ManageMouseInput();
 	ManageKeyboardInput();
 
-	cl_err = clEnqueueAcquireGLObjects(my_cl_command_queue, 1, &my_cl_buffer, NULL, NULL, &AcquireTextureDone);
+	cl_err = clEnqueueAcquireGLObjects(my_cl_command_queue, 1, &my_cl_rendertexture_buffer, NULL, NULL, &AcquireTextureDone);
 	cl_perr("clEnqueueAcquireGLObjects", cl_err);
 
 	
-	cl_err = clSetKernelArg(my_cl_kernel, 0, sizeof(cl_mem), &my_cl_buffer);
-	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(int), &screen_width);
-	cl_err |= clSetKernelArg(my_cl_kernel, 2, sizeof(int), &screen_height);
-	cl_err |= clSetKernelArg(my_cl_kernel, 3, sizeof(cl_float16), &transformMatrix);
+	cl_err  = clSetKernelArg(my_cl_kernel, 0, sizeof(cl_mem), &my_cl_rendertexture_buffer);
+	cl_err |= clSetKernelArg(my_cl_kernel, 1, sizeof(cl_mem), &my_cl_octree_buffer);
+	cl_err |= clSetKernelArg(my_cl_kernel, 2, sizeof(int), &screen_width);
+	cl_err |= clSetKernelArg(my_cl_kernel, 3, sizeof(int), &screen_height);
+	cl_err |= clSetKernelArg(my_cl_kernel, 4, sizeof(cl_float16), &transformMatrix);
 	cl_perr("clSetKernelArg", cl_err);
 
 	
@@ -120,7 +122,7 @@ void display()
 	cl_err = clEnqueueNDRangeKernel (my_cl_command_queue, my_cl_kernel, 2, NULL, global_work_size,  local_work_size, 1, &AcquireTextureDone, &RenderTextureDone);
 	cl_perr("clEnqueueNDRangeKernel", cl_err);
 
-	cl_err = clEnqueueReleaseGLObjects(my_cl_command_queue, 1, &my_cl_buffer, 1, &RenderTextureDone, &ReleaseTextureDone);	
+	cl_err = clEnqueueReleaseGLObjects(my_cl_command_queue, 1, &my_cl_rendertexture_buffer, 1, &RenderTextureDone, &ReleaseTextureDone);	
 	cl_perr("clEnqueueReleaseGLObjects", cl_err);
 
 	clWaitForEvents(1, &ReleaseTextureDone);
@@ -280,22 +282,16 @@ int main(int argc, char** argv)
 		my_cl_kernel = clCreateKernel (my_cl_program, "renderPixel", &cl_err);
 		cl_perr("clCreateKernel", cl_err);
 
-
-		const int size = 100;
-		float* cl_buffer_data = new float[size];
-		for (int i = 0; i < size; i++) cl_buffer_data[i]=i;
-
-		my_cl_buffer = clCreateFromGLTexture2D(my_cl_context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureID, &cl_err);
-
+		
+		my_cl_rendertexture_buffer = clCreateFromGLTexture2D(my_cl_context, CL_MEM_WRITE_ONLY, GL_TEXTURE_2D, 0, textureID, &cl_err);
+		cl_perr("clCreateBuffer", cl_err);
+		
+		
+		char* oct_file;
+		size_t oct_file_size = loadFile("D:\\donut.oct", &oct_file);
+		my_cl_octree_buffer = clCreateBuffer( 	my_cl_context , CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, oct_file_size, oct_file, &cl_err);
 		cl_perr("clCreateBuffer", cl_err);
 
-
-		/*cl_err = clEnqueueReadBuffer(cl_command_queue , cl_buffer, CL_TRUE, 0, size*sizeof(float), cl_buffer_data, 0, NULL, NULL);
-		cl_perr("clEnqueueReadBuffer", cl_err);
-
-		for (int i = 0; i < size; i++) cout << cl_buffer_data[i] << " ";*/
-
-		rebuild_transformMatrix();
 		glutFullScreen();
 		time(&startTime);
 		glutMainLoop();

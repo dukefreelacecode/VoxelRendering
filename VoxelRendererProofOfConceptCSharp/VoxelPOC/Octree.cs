@@ -8,9 +8,9 @@ namespace VoxelPOC
 {
     public class Octree
     {
-        public IOctreeNode Root { get; private set; }
-        public Vector3 LowerCornerWorld { get; private set; }
-        public Vector3 UpperCornerWorld { get; private set; }
+        public IOctreeNode Root { get; protected set; }
+        public Vector3 LowerCornerWorld { get; protected set; }
+        public Vector3 UpperCornerWorld { get; protected set; }
         const double epsilon = 1e-10;
 
         public static List<int> rayTraceStepCountLog = new List<int>();
@@ -31,6 +31,9 @@ namespace VoxelPOC
         {
             return Vector3.PointwiseMultiply(v, UpperCornerWorld - LowerCornerWorld) + LowerCornerWorld;
         }
+
+        public Octree()
+        { }
 
         public Octree(List<SurfaceTangentPoint> pcloud, int depth)
         {
@@ -253,26 +256,26 @@ namespace VoxelPOC
 
         int WriteToFileRec(List<byte> data, IOctreeNode self_node)
         {
-            int returnOffset = data.Count;
+            int thisNodeOffset = data.Count;
 
             if (self_node is OctreeParent)
             {
                 OctreeParent op = (OctreeParent)self_node;
 
-                byte[] block = new byte[8*4+1];
+                byte[] block = new byte[8 * 4 + 1];
                 block[0] = ID_BRANCH;
                 data.AddRange(block);
 
 
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 0, WriteToFileRec(data, op.xyz));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 1, WriteToFileRec(data, op.xyZ));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 2, WriteToFileRec(data, op.xYz));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 3, WriteToFileRec(data, op.xYZ));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 0, WriteToFileRec(data, op.xyz));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 1, WriteToFileRec(data, op.xyZ));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 2, WriteToFileRec(data, op.xYz));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 3, WriteToFileRec(data, op.xYZ));
 
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 4, WriteToFileRec(data, op.Xyz));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 5, WriteToFileRec(data, op.XyZ));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 6, WriteToFileRec(data, op.XYz));
-                writeIntToBytesAt(data, returnOffset + 1 + 4 * 7, WriteToFileRec(data, op.XYZ));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 4, WriteToFileRec(data, op.Xyz));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 5, WriteToFileRec(data, op.XyZ));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 6, WriteToFileRec(data, op.XYz));
+                writeIntToBytesAt(data, thisNodeOffset + 1 + 4 * 7, WriteToFileRec(data, op.XYZ));
 
 
 
@@ -283,17 +286,18 @@ namespace VoxelPOC
 
                 byte[] block = new byte[7];
                 block[0] = ID_LEAF;
-                block[1] = 0x21; // red
-                block[2] = 0x22; // green 
-                block[3] = 0x23; // blue
+                block[1] = 111; // red
+                block[2] = 112; // green 
+                block[3] = 113; // blue
                 block[4] = (byte)((char)(oen.SurfaceNormal.X * 126));
                 block[5] = (byte)((char)(oen.SurfaceNormal.Y * 126));
                 block[6] = (byte)((char)(oen.SurfaceNormal.Z * 126));
 
                 data.AddRange(block);
             }
+            else if (self_node == null) return 0;
 
-            return returnOffset;
+            return thisNodeOffset;
 
         }
 
@@ -301,10 +305,10 @@ namespace VoxelPOC
         {
             byte[] bytes = new byte[4]
             {
-                (byte)((integer>>24)&0x000000ff),
-                (byte)((integer>>16)&0x000000ff),
-                (byte)((integer>>8)&0x000000ff),
                 (byte)((integer>>0)&0x000000ff),
+                (byte)((integer>>8)&0x000000ff),
+                (byte)((integer>>16)&0x000000ff),
+                (byte)((integer>>24)&0x000000ff),
             };
 
             for (int i = 0; i < 4; i++)

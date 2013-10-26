@@ -23,8 +23,9 @@ namespace VoxelPOC
 
             Text = "Voxel Renderer Proof Of Concept";
             pcloud = GeneratePointCloud.Donut();
-            octree = new Octree(pcloud,5);
-            //octree.WriteToFile("D:\\donut.oct");
+            //octree = new BuildOctreeFromFile();
+            octree = new Octree(pcloud,4);
+            octree.WriteToFile("D:\\donut.oct");
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -33,12 +34,17 @@ namespace VoxelPOC
             e.Graphics.DrawImage((Image)PointCloudRenderer.Render(pcloud, 100, 100), 0, 0);
             e.Graphics.DrawString("PointCloudRenderer: Renders a \nlist of points into a Z-Buffer image.", new Font("Arial", 16), new SolidBrush(Color.Black), 150, 20);
 
+            try
+            {
             e.Graphics.DrawImage((Image)FullRecursiveOctreeRenderer.Render(octree, 100, 100), 0, 200);
             e.Graphics.DrawString("FullRecursiveOctreeRenderer: Reads through the entire Octree \nand renders it into a Z-Buffer image.", new Font("Arial", 16), new SolidBrush(Color.Black), 150, 220);
 
-            e.Graphics.DrawImage((Image)RaycastingOctreeRenderer.Render(octree, 100, 100), 0, 400);
-            e.Graphics.DrawString("RaycastingOctreeRenderer: Propagates a ray through \nthe Octree for each pixel.", new Font("Arial", 16), new SolidBrush(Color.Black), 150, 420);
-            
+                e.Graphics.DrawImage((Image)RaycastingOctreeRenderer.Render(octree, 100, 100), 0, 400);
+                e.Graphics.DrawString("RaycastingOctreeRenderer: Propagates a ray through \nthe Octree for each pixel.", new Font("Arial", 16), new SolidBrush(Color.Black), 150, 420);
+            }
+            catch (Exception ex) 
+            {
+            }
             //e.Graphics.DrawImage((Image)OctFileRenderer.Render(100, 100), 0, 600);
             Invalidate();
         }
