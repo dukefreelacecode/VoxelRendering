@@ -1,4 +1,4 @@
-#define EPSILON 1e-5f
+#define EPSILON 1e-4f
 
 float3 mat_vec_mul(float16 mat, float4 vec)
 {
@@ -28,26 +28,17 @@ float CubeRayIntersectPointParameter(float3 ray_origin, float3 ray_direction, fl
 {
 	float parameterCanidates[6];
 	
-	/*parameterCanidates[0] = (cube.x          - ray_origin.x) / ray_direction.x;
-	parameterCanidates[1] = (cube.x + cube.w - ray_origin.x) / ray_direction.x;
+	int i = 0;
 
-	parameterCanidates[2] = (cube.y          - ray_origin.y) / ray_direction.y;
-	parameterCanidates[3] = (cube.y + cube.w - ray_origin.y) / ray_direction.y;
+	parameterCanidates[i++] = (cube.x          - ray_origin.x) / ray_direction.x;
+	parameterCanidates[i++] = (cube.x + cube.w - ray_origin.x) / ray_direction.x;
 
-	parameterCanidates[4] = (cube.z          - ray_origin.z) / ray_direction.z;
-	parameterCanidates[5] = (cube.z + cube.w - ray_origin.z) / ray_direction.z;*/
+	parameterCanidates[i++] = (cube.y          - ray_origin.y) / ray_direction.y;
+	parameterCanidates[i++] = (cube.y + cube.w - ray_origin.y) / ray_direction.y;
 
+	parameterCanidates[i++] = (cube.z          - ray_origin.z) / ray_direction.z;
+	parameterCanidates[i++] = (cube.z + cube.w - ray_origin.z) / ray_direction.z;
 
-
-
-	parameterCanidates[0] = cube.x / ray_direction.x - ray_origin.x / ray_direction.x;
-	parameterCanidates[1] = cube.x / ray_direction.x + cube.w / ray_direction.x - ray_origin.x / ray_direction.x;
-
-	parameterCanidates[2] = cube.y / ray_direction.y - ray_origin.y / ray_direction.y;
-	parameterCanidates[3] = cube.y / ray_direction.y + cube.w / ray_direction.y - ray_origin.y / ray_direction.y;
-
-	parameterCanidates[4] = cube.z / ray_direction.z - ray_origin.z / ray_direction.z;
-	parameterCanidates[5] = cube.z / ray_direction.z + cube.w / ray_direction.z - ray_origin.z / ray_direction.z;
 
 	float new_parameter = -1; // -1 == undefined
 
@@ -119,7 +110,7 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 				float4 current_cube = (float4)(0, 0, 0, 1);
 				float3 ray_tip = ray_origin + ray_direction * ray_parameter;
 
-				if(!PointInCube(ray_tip, current_cube)) { pixel.x = 1; break; }
+				if(!PointInCube(ray_tip, current_cube)) { pixel.xyz = ray_direction+.5f; break; }
 				
 				bool stopTraverseOctree = false;
 
@@ -144,7 +135,7 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 
 								if(subcube_node <= 0)
 								{
-									float increment = subcubes[i].w/2;
+									/*float increment = subcubes[i].w/2;
 									
 									while(increment > EPSILON)
 									{
@@ -153,9 +144,9 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 
 										increment /= 2;
 									}
-									ray_parameter += 2*increment;
+									ray_parameter += 2*increment;*/
 
-									/*float new_ray_parameter = 3 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
+									float new_ray_parameter = 2 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
 									if(new_ray_parameter > ray_parameter)
 									{
 										ray_parameter = new_ray_parameter;
@@ -166,8 +157,8 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 										if(new_ray_parameter == -1)
 										pixel.x=1;
 										pixel.y=.5f;
-									}*/
-									//ray_parameter += subcubes[i].w*0.3f;
+									}
+
 									stopTraverseOctree = true;
 								}
 								else

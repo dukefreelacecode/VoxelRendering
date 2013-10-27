@@ -21,13 +21,11 @@ using namespace std;
 
 
 int frameCount = 0;
+clock_t startTime;
+
 int windowID;
-
 GLuint textureID;
-
 int screen_width,screen_height;
-
-time_t startTime;
 
 cl_int cl_err;
 cl_platform_id my_cl_platform;
@@ -66,7 +64,7 @@ void cl_perr(char* context, cl_int err)
 void ManageMouseInput()
 {
 	POINT p;
-	if (GetCursorPos(&p))
+	if (GetKeyState(VK_F1) == 0 && GetCursorPos(&p))
 	{
 		yaw += (p.x-screen_width/2)*0.005f;
 		pitch += (p.y-screen_height/2)*0.005f;
@@ -145,13 +143,15 @@ void display()
 	glutSwapBuffers();
 	glutPostRedisplay();
 	frameCount++;
-	
-	if(frameCount % 100 == 0)
-	{
-		time_t now;
-		time(&now);
-		cout << (frameCount/((float)(now-startTime))) << " FPS" << endl;
 
+	clock_t now = clock();
+	float dt = ((float)now-startTime)/CLOCKS_PER_SEC;
+	if(dt > 1)
+	{
+		cout << (frameCount/dt) << " FPS" << endl;
+		// reset
+		startTime = clock();
+		frameCount = 0;
 	}
 }
 
@@ -186,9 +186,9 @@ int main(int argc, char** argv)
 {
 	GetDesktopResolution(screen_width, screen_height);
 
-	camPosition.s[0] = 0;
-	camPosition.s[1] = 0;
-	camPosition.s[2] = 0;
+	camPosition.s[0] = -2;
+	camPosition.s[1] = 2;
+	camPosition.s[2] = 2;
 
 	glutInit(&argc, argv);
 	
@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 
 	
 	char* kernel_file_c_str;
-	size_t kernel_file_c_str_size = loadFile("../AcceleratedVoxelRendering/kernel.cl", &kernel_file_c_str);
+	size_t kernel_file_c_str_size = loadFile("../AcceleratedVoxelRendering/kernel_stack.cl", &kernel_file_c_str);
 		
 	my_cl_program = clCreateProgramWithSource(my_cl_context, 1, (const char**)&kernel_file_c_str, &kernel_file_c_str_size, &cl_err);
 	cl_perr("clCreateProgramWithSource", cl_err);
@@ -288,12 +288,11 @@ int main(int argc, char** argv)
 		
 		
 		char* oct_file;
-		size_t oct_file_size = loadFile("D:\\donut.oct", &oct_file);
+		size_t oct_file_size = loadFile("D:\\donut6.oct", &oct_file);
 		my_cl_octree_buffer = clCreateBuffer( 	my_cl_context , CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, oct_file_size, oct_file, &cl_err);
 		cl_perr("clCreateBuffer", cl_err);
 
 		glutFullScreen();
-		time(&startTime);
 		glutMainLoop();
 	}
 }
