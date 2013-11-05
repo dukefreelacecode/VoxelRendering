@@ -53,6 +53,7 @@ namespace VoxelPOC
             Root = BuildOctree(local_points, new Vector3(0, 0, 0), 0, depth);
         }
 
+
         private IOctreeNode BuildOctree(List<SurfaceTangentPoint> points, Vector3 LowerLocalCorner, int current_recursion, int max_recursion)
         {
             double boxWidth = Math.Pow(2, -current_recursion);
@@ -289,9 +290,9 @@ namespace VoxelPOC
                 block[1] = 111; // red
                 block[2] = 112; // green 
                 block[3] = 113; // blue
-                block[4] = (byte)((char)(oen.SurfaceNormal.X * 126));
-                block[5] = (byte)((char)(oen.SurfaceNormal.Y * 126));
-                block[6] = (byte)((char)(oen.SurfaceNormal.Z * 126));
+                block[4] = (byte)(oen.SurfaceNormal.X * 126 + 126);
+                block[5] = (byte)(oen.SurfaceNormal.Y * 126 + 126);
+                block[6] = (byte)(oen.SurfaceNormal.Z * 126 + 126);
 
                 data.AddRange(block);
             }

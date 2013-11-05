@@ -109,7 +109,7 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 			stack[0].cube = (float4)(0, 0, 0, 1);
 
 			// advance ray loop
-			for(int rayCastStep = 0; rayCastStep < 120 && !stopAdvanceRay; rayCastStep++)
+			for(int rayCastStep = 0; rayCastStep < 100 && !stopAdvanceRay; rayCastStep++)
 			{
 				if(!PointInCube(ray_origin + ray_direction * ray_parameter, stack[stack_index].cube)) 
 				{
@@ -125,7 +125,15 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 				if(octree[stack[stack_index].offset] == ID_LEAF)
 				{
 					stopAdvanceRay = true;
-					pixel.xyz = 1;
+
+					float brightness = 
+						(octree[stack[stack_index].offset+4]-126)/126.0f * 0.57735f
+						+(octree[stack[stack_index].offset+5]-126)/126.0f * 0.57735f
+						+(octree[stack[stack_index].offset+6]-126)/126.0f * 0.57735f;
+
+						
+					pixel.xyz = brightness;
+
 					break;
 				}
 				else if(octree[stack[stack_index].offset] == ID_BRANCH)
@@ -143,9 +151,9 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 							{
 								// advance ray
 
-								ray_parameter += subcubes[i].w;	
+								
 
-								/*float new_ray_parameter = 2 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
+								float new_ray_parameter = 2 * EPSILON + CubeRayIntersectPointParameter(ray_origin, ray_direction, subcubes[i], false);
 								if(new_ray_parameter > ray_parameter)
 								{
 									ray_parameter = new_ray_parameter;
@@ -161,7 +169,7 @@ __kernel void renderPixel(__write_only image2d_t outputImage, __global uchar* oc
 
 									increment /= 2;
 								}
-								ray_parameter += 2*increment;*/
+								ray_parameter += 2*increment;
 							}
 							else
 							{

@@ -22,6 +22,7 @@ using namespace std;
 
 int frameCount = 0;
 clock_t startTime;
+float fps = 100;
 
 int windowID;
 GLuint textureID;
@@ -85,7 +86,7 @@ void ManageKeyboardInput()
 
 	float _cos = cos(yaw);
 	float _sin = sin(yaw);
-	const float moveSpeed = 0.01f;
+	const float moveSpeed = min(0.05f, 5 / fps);
 
 	if(GetKeyState('W')<0) { camPosition.s[0] += moveSpeed * _sin ; camPosition.s[2] += moveSpeed * _cos; }
 	if(GetKeyState('S')<0) { camPosition.s[0] += moveSpeed * -_sin ; camPosition.s[2] += moveSpeed * -_cos; }
@@ -99,6 +100,8 @@ void ManageKeyboardInput()
 
 void display()
 {
+	//Sleep(400);
+
 	ManageMouseInput();
 	ManageKeyboardInput();
 
@@ -148,7 +151,8 @@ void display()
 	float dt = ((float)now-startTime)/CLOCKS_PER_SEC;
 	if(dt > 1)
 	{
-		cout << (frameCount/dt) << " FPS" << endl;
+		fps = frameCount/dt;
+		cout << fps << " FPS" << endl;
 		// reset
 		startTime = clock();
 		frameCount = 0;
@@ -185,10 +189,12 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 int main(int argc, char** argv) 
 {
 	GetDesktopResolution(screen_width, screen_height);
+	//screen_width /=2;
+	//screen_height /=2;
 
-	camPosition.s[0] = -2;
+	camPosition.s[0] = 2;
 	camPosition.s[1] = 2;
-	camPosition.s[2] = 2;
+	camPosition.s[2] = -2;
 
 	glutInit(&argc, argv);
 	
@@ -240,8 +246,21 @@ int main(int argc, char** argv)
 	cl_err = clGetDeviceInfo(my_cl_device, CL_DEVICE_NAME, 254, devName, NULL);
 	cl_perr("clGetDeviceInfo", cl_err);
 	cout << "Device Name: " << devName << endl;
-	
 
+	
+	
+	
+	cl_ulong my_CL_DEVICE_MAX_MEM_ALLOC_SIZE;
+	cl_err = clGetDeviceInfo(my_cl_device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &my_CL_DEVICE_MAX_MEM_ALLOC_SIZE, NULL);
+	cl_perr("clGetDeviceInfo", cl_err);
+	cout << "CL_DEVICE_MAX_MEM_ALLOC_SIZE: " << my_CL_DEVICE_MAX_MEM_ALLOC_SIZE << endl;
+	
+	cl_ulong my_CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE;
+	cl_err = clGetDeviceInfo(my_cl_device, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(cl_ulong), &my_CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, NULL);
+	cl_perr("clGetDeviceInfo", cl_err);
+	cout << "CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE: " << my_CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE << endl;
+
+	
 
 	// ===== OpenCL Context =========
 
@@ -262,6 +281,12 @@ int main(int argc, char** argv)
 	
 	char* kernel_file_c_str;
 	size_t kernel_file_c_str_size = loadFile("../AcceleratedVoxelRendering/kernel_stack.cl", &kernel_file_c_str);
+	if(kernel_file_c_str == NULL) kernel_file_c_str_size = loadFile("kernel_stack.cl", &kernel_file_c_str);
+	if(kernel_file_c_str == NULL) 
+	{
+		cout << "Missing file: kernel_stack.cl" << endl; char dummy;cin >> dummy;
+		exit(EXIT_FAILURE);
+	}
 		
 	my_cl_program = clCreateProgramWithSource(my_cl_context, 1, (const char**)&kernel_file_c_str, &kernel_file_c_str_size, &cl_err);
 	cl_perr("clCreateProgramWithSource", cl_err);
@@ -289,7 +314,15 @@ int main(int argc, char** argv)
 		
 		char* oct_file;
 		size_t oct_file_size = loadFile("D:\\donut6.oct", &oct_file);
-		my_cl_octree_buffer = clCreateBuffer( 	my_cl_context , CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, oct_file_size, oct_file, &cl_err);
+		if(oct_file == NULL) oct_file_size = loadFile("donut6.oct", &oct_file);
+		if(kernel_file_c_str == NULL) 
+		{
+			cout << "Missing file: donut6.oct" << endl; char dummy;cin >> dummy;
+			exit(EXIT_FAILURE);
+		}
+
+
+		my_cl_octree_buffer = clCreateBuffer(my_cl_context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, oct_file_size, oct_file, &cl_err);
 		cl_perr("clCreateBuffer", cl_err);
 
 		glutFullScreen();

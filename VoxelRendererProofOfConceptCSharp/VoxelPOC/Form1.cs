@@ -24,8 +24,8 @@ namespace VoxelPOC
             Text = "Voxel Renderer Proof Of Concept";
             pcloud = GeneratePointCloud.Donut();
             //octree = new BuildOctreeFromFile();
-            octree = new Octree(pcloud,4);
-            octree.WriteToFile("D:\\donut.oct");
+            octree = new Octree(pcloud,6);
+            octree.WriteToFile("D:\\donut6.oct");
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)

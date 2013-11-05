@@ -11,10 +11,10 @@ namespace VoxelPOC
         {
             List<SurfaceTangentPoint> list = new List<SurfaceTangentPoint>();
 
-            for (double a = 0; a < 1; a += .002)
+            for (double a = 0; a < 1; a += .0005)
             {
                 Vector3 v1 = new Vector3(3 * Math.Cos(a * Math.PI * 2), 3 * Math.Sin(a * Math.PI * 2), 0);
-                for (double b = 0; b < 1; b += .002)
+                for (double b = 0; b < 1; b += .0005)
                 {
                     Vector3 v2 = new Vector3(Math.Cos(b * Math.PI * 2) * Math.Cos(a * Math.PI * 2), Math.Cos(b * Math.PI * 2) * Math.Sin(a * Math.PI * 2),  Math.Sin(b * Math.PI * 2));
                     v2 = v2.Normalized();
